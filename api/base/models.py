@@ -29,9 +29,9 @@ class Drone(CommonInfo):
     ]
 
     serial_number = models.CharField(
-        max_length=100, 
-        verbose_name=_('Serial number'), 
-        unique=True, 
+        max_length=100,
+        verbose_name=_('Serial number'),
+        unique=True,
         null=False,
         blank=False
     )
@@ -72,6 +72,32 @@ class Drone(CommonInfo):
         return self.serial_number
 
 
+class Flight(CommonInfo):
+    drone_rel = models.ForeignKey(
+        Drone,
+        verbose_name=_('Drone'),
+        on_delete=models.CASCADE,
+        null=False
+    )
+
+    start_datetime = models.DateTimeField(
+        null=True,
+        verbose_name=_("Start datetime")
+    )
+    arrive_datetime = models.DateTimeField(
+        null=True,
+        verbose_name=_('Arrived')
+    )
+
+    was_delivered = models.BooleanField(
+        verbose_name=_('Was delivered?'),
+        default=False
+    )
+
+    def __str__(self) -> str:
+        return "Flight {}-{}".format(self.drone_rel.serial_number, self.created)
+
+
 class Medication(CommonInfo):
     name = models.CharField(
         unique=True,
@@ -103,3 +129,32 @@ class Medication(CommonInfo):
 
     def __str__(self) -> str:
         return self.name
+
+
+class Load(CommonInfo):
+    flight_rel = models.ForeignKey(
+        Flight,
+        verbose_name=_('Flight'),
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
+    medication_rel = models.ForeignKey(
+        Medication,
+        verbose_name=_('Medication'),
+        on_delete=models.PROTECT,
+        null=False,
+    )
+
+    quantity = models.IntegerField(
+        verbose_name=_('Quantity'),
+        default=1,
+        null=False,
+        blank=False,
+    )
+
+    class Meta:
+        unique_together = [['flight_rel', 'medication_rel']]
+
+    def __str__(self) -> str:
+        return "{}-{}".format(self.flight_rel, self.medication_rel)
