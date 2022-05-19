@@ -1,0 +1,4 @@
+.vscode/
+api/static/admin
+api/static/rest_framework
+api/static/drf_spectacular_sidecar

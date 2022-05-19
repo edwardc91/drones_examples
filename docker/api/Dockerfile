@@ -1,4 +1,4 @@
-FROM python:3.8.9-buster
+FROM andrejreznik/python-gdal:stable
 
 # These two environment variables prevent __pycache__/ files.
 ENV PYTHONUNBUFFERED 1
