@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.4'
 
 services:
   api:
@@ -18,6 +18,7 @@ services:
         uwsgi --ini /project/uwsgi.ini
     volumes:
       - ./api:/project
+      - api-media:/api_media
     ports:
       - 8005:8000
     restart: always
@@ -38,6 +39,7 @@ services:
     command: celery -A vermar_api worker -l info
     volumes:
       - ./api:/project
+      - api-media:/api_media
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
     env_file:
@@ -53,6 +55,7 @@ services:
     command: celery -A drones beat -l info
     volumes:
       - ./api:/project
+      - api-media:/api_media
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
     env_file:
@@ -85,4 +88,11 @@ services:
     env_file:
       - .env
     restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+volumes:
+  api-media:
+    name: ${PROJECT_NAME}_api_media
+  db-data:
+    name: ${PROJECT_NAME}_db_data
 

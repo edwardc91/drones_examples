@@ -7,7 +7,8 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # RUN env
 
 RUN mkdir /project && \
-    mkdir /project/static 
+    mkdir /project/static && \
+    mkdir /api_media
 
 # Change the working directory. 
 # Every command after this will be run from the /project directory.

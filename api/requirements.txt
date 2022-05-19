@@ -15,6 +15,7 @@ django-multitenant==3.0.0
 django-filter==21.1
 djangorestframework==3.13.1
 djangorestframework-simplejwt==5.0.0
+dynamic-rest==2.1.2 
 drf-spectacular==0.21.2
 drf-spectacular-sidecar==2022.2.7
 flower==1.0.0
@@ -43,3 +44,5 @@ vine==5.0.0
 wcwidth==0.2.5
 wrapt==1.13.3
 zipp==3.7.0
+Pillow==9.0.1
+matplotlib==3.5.2

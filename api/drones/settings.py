@@ -40,11 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # custom apps
-    'rest_framework',
     'corsheaders',
+    'rest_framework',
+    'dynamic_rest',
     'logentry_admin',
     'drf_spectacular',
     'drf_spectacular_sidecar',
+    'base.apps.BaseConfig'
 ]
 
 MIDDLEWARE = [
@@ -129,6 +131,10 @@ REST_FRAMEWORK = {
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.JSONParser",
     ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'dynamic_rest.renderers.DynamicBrowsableAPIRenderer',
+    ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
@@ -138,7 +144,8 @@ SIMPLE_JWT = {
 
 # Celery configurations
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', "redis://redis:6379")
-CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', "redis://redis:6379")
+CELERY_RESULT_BACKEND = os.getenv(
+    'CELERY_RESULT_BACKEND', "redis://redis:6379")
 
 
 # Internationalization
@@ -182,3 +189,7 @@ SPECTACULAR_SETTINGS = {
 # rest login logout urls
 LOGIN_URL = 'rest_framework:login'
 LOGOUT_URL = 'rest_framework:logout'
+
+MEDIA_ROOT = os.getenv('SA_UPLOADED_FILES_DIR',
+                       '/home/emiguel/mareas_ftp/ordered')
+MEDIA_URL = "/media/"
