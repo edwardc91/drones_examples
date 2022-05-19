@@ -13,9 +13,12 @@ services:
       - -c
       - |
         yes 'yes' | python manage.py collectstatic 
+        python manage.py loaddata drones
         python manage.py makemigrations
         python manage.py migrate --noinput
-        uwsgi --ini /project/uwsgi.ini
+        python manage.py inituser
+        /bin/sh -c "while sleep 1000; do :; done"
+    #    uwsgi --ini /project/uwsgi.ini
     volumes:
       - ./api:/project
       - api-media:/api_media

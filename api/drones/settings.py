@@ -193,3 +193,7 @@ LOGOUT_URL = 'rest_framework:logout'
 MEDIA_ROOT = os.getenv('SA_UPLOADED_FILES_DIR',
                        '/home/emiguel/mareas_ftp/ordered')
 MEDIA_URL = "/media/"
+
+ADMINS = [
+    ('admin', 'admin@gmail.com'),
+]
