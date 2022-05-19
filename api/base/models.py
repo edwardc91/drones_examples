@@ -68,6 +68,9 @@ class Drone(CommonInfo):
         null=False,
     )
 
+    def __str__(self) -> str:
+        return self.serial_number
+
 
 class Medication(CommonInfo):
     name = models.CharField(
@@ -97,3 +100,6 @@ class Medication(CommonInfo):
         verbose_name=_('Image'),
         null=True,
     )
+
+    def __str__(self) -> str:
+        return self.name
