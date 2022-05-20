@@ -26,9 +26,12 @@ from rest_framework_simplejwt import views as jwt_views
 from dynamic_rest import routers
 
 from base.api.views import drones as drones_views
+from base.api.views import medications as medications_views
+
 
 router = routers.DynamicRouter()
 router.register(r'drones', drones_views.DroneViewSet, 'drones')
+router.register(r'medications', medications_views.MedicationViewSet, 'medications')
 
 
 urlpatterns = [

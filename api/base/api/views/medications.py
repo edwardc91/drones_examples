@@ -10,13 +10,13 @@ from dynamic_rest.viewsets import DynamicModelViewSet
 from dynamic_rest.filters import DynamicFilterBackend, DynamicSortingFilter
 
 
-from base.models import Drone
-from base.api.serializers.drones import DroneSerializer
+from base.models import Medication
+from base.api.serializers.medications import MedicationSerializer
 
 
-class DroneViewSet(DynamicModelViewSet):
+class MedicationViewSet(DynamicModelViewSet):
     """
-    API endpoint that allows drone to be viewed and edited.
+    API endpoint that allows medications to be viewed and edited.
     """
 
     authentication_classes = [SessionAuthentication, JWTAuthentication]
@@ -26,14 +26,14 @@ class DroneViewSet(DynamicModelViewSet):
         DynamicFilterBackend, DynamicSortingFilter,
     ]
 
-    model = Drone
-    queryset = Drone.objects.all()
-    serializer_class = DroneSerializer
+    model = Medication
+    queryset = Medication.objects.all()
+    serializer_class = MedicationSerializer
 
     def get_queryset(self):
         """
-        Filters and sorts drones.
+        Filters and sorts medications.
         """
-        queryset = Drone.objects.all()
+        queryset = Medication.objects.all()
 
-        return queryset.order_by("serial_number")
+        return queryset.order_by("name")
