@@ -52,6 +52,10 @@ class DroneViewSet(DynamicModelViewSet):
                    description="API endpoint allowing to retrieve the available drones for loading.")
     @action(detail=False, methods=['get'])
     def available_for_loading(self, request, pk=None):
+        """
+        Endpoint to get the drones available for loading
+        """
+
         drones = Drone.objects.filter(
             Q(state='IDLE', battery_capacity__gte=25) |
             Q(state='LOADING')
@@ -60,5 +64,5 @@ class DroneViewSet(DynamicModelViewSet):
         page = self.paginate_queryset(drones)
         if page is not None:
             return self.get_paginated_response(DroneSerializer(embed=True, many=True).to_representation(drones))
-            
+
         return Response(DroneSerializer(embed=True, many=True).to_representation(drones))

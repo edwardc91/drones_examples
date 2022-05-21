@@ -94,6 +94,14 @@ class Drone(CommonInfo):
         else:
             return 0
 
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=models.Q(weight_limit__lte=500), name='weight_limit_lte_500'),
+            models.CheckConstraint(check=models.Q(weight_limit__gte=0), name='weight_limit_gte_0'),
+            models.CheckConstraint(check=models.Q(battery_capacity__lte=100), name='battery_capacity_lte_100'),
+            models.CheckConstraint(check=models.Q(battery_capacity__gte=0), name='battery_capacity_gte_0'),
+        ]
+
     def __str__(self) -> str:
         return self.serial_number
 
@@ -170,6 +178,12 @@ class Medication(CommonInfo):
 
     def __str__(self) -> str:
         return self.name
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=models.Q(weight__lte=500), name='weight_lte_500'),
+            models.CheckConstraint(check=models.Q(weight__gt=0), name='weight_gt_0'),
+        ]
 
 
 class Load(CommonInfo):
