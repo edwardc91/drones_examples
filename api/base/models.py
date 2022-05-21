@@ -84,7 +84,7 @@ class Drone(CommonInfo):
 
 
     def get_load(self):
-        current_flight = self.flights_rel.filter(was_delivered=False)[:1]
+        current_flight = self.flights_rel.filter(was_delivered=False)
         if current_flight.exists():
             return current_flight[0].loads_rel.aggregate(
                 total_load=Sum(
@@ -209,6 +209,9 @@ class Load(CommonInfo):
         null=False,
         blank=False,
     )
+
+    def get_weight(self):
+        return self.medication_rel.weight * self.quantity
 
     class Meta:
         unique_together = [['flight_rel', 'medication_rel']]

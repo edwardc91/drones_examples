@@ -12,7 +12,7 @@ from dynamic_rest.filters import DynamicFilterBackend, DynamicSortingFilter
 from django.db.models import Q
 
 from base.models import Drone
-from base.api.serializers.drones import DroneSerializer, DroneBatterySerializer
+from base.api.serializers.drones import DroneSerializer, DroneBatterySerializer, DroneLoadSerializer
 
 
 class DroneViewSet(DynamicModelViewSet):
@@ -45,7 +45,18 @@ class DroneViewSet(DynamicModelViewSet):
     @action(detail=True, methods=['get'])
     def battery(self, request, pk=None):
         drone = self.get_object()
-        return Response(DroneBatterySerializer(embed=True, many=False).to_representation(drone))
+        return Response(DroneBatterySerializer(embed=True, many=True).to_representation(drone))
+
+    @extend_schema(methods=['get'], responses={200: DroneLoadSerializer()},
+                   description="API endpoint allowing to retrieve the load for a drone.")
+    @action(detail=True, methods=['get'])
+    def load(self, request, pk=None):
+        drone = self.get_object()
+        flights = drone.flights_rel.filter(was_delivered=False)
+        loads = {}
+        if flights.exists():
+            loads = flights[0].loads_rel
+        return Response(DroneLoadSerializer(embed=True, many=True).to_representation(loads))
 
 
     @extend_schema(methods=['get'], responses={200: DroneSerializer(many=True)},
