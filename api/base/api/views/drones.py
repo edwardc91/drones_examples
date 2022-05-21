@@ -11,7 +11,7 @@ from dynamic_rest.filters import DynamicFilterBackend, DynamicSortingFilter
 
 
 from base.models import Drone
-from base.api.serializers.drones import DroneSerializer
+from base.api.serializers.drones import DroneSerializer, DroneBatterySerializer
 
 
 class DroneViewSet(DynamicModelViewSet):
@@ -37,3 +37,11 @@ class DroneViewSet(DynamicModelViewSet):
         queryset = Drone.objects.all()
 
         return queryset.order_by("serial_number")
+
+
+    @extend_schema(methods=['get'], responses={200: DroneBatterySerializer()},
+                   description="API endpoint allowing to retrieve the battery for a drone.")
+    @action(detail=True, methods=['get'])
+    def battery(self, request, pk=None):
+        drone = self.get_object()
+        return Response(DroneBatterySerializer(embed=True, many=False).to_representation(drone))

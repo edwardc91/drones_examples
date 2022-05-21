@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -76,6 +77,22 @@ class Drone(CommonInfo):
         null=False,
     )
 
+    def is_ready_to_flight(self):
+        state = self.state
+        return state == 'IDLE' or state == 'LOADING'
+
+
+    def get_load(self):
+        current_flight = self.flights_rel.filter(was_delivered=False)[:1]
+        if current_flight.exists():
+            return current_flight[0].loads_rel.aggregate(
+                total_load=Sum(
+                    'medication_rel__weight', 
+                    field="medication_rel__weight*quantity")
+                )['total_load']  
+        else:
+            return 0
+
     def __str__(self) -> str:
         return self.serial_number
 
@@ -95,7 +112,8 @@ class Flight(CommonInfo):
         Drone,
         verbose_name=_('Drone'),
         on_delete=models.CASCADE,
-        null=False
+        null=False,
+        related_name='flights_rel',
     )
 
     start_datetime = models.DateTimeField(
@@ -159,6 +177,7 @@ class Load(CommonInfo):
         verbose_name=_('Flight'),
         on_delete=models.CASCADE,
         null=False,
+        related_name='loads_rel',
     )
 
     medication_rel = models.ForeignKey(
@@ -166,6 +185,7 @@ class Load(CommonInfo):
         verbose_name=_('Medication'),
         on_delete=models.PROTECT,
         null=False,
+        related_name='loads_rel',
     )
 
     quantity = models.IntegerField(
