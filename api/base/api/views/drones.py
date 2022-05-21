@@ -9,6 +9,7 @@ from drf_spectacular.utils import extend_schema
 from dynamic_rest.viewsets import DynamicModelViewSet
 from dynamic_rest.filters import DynamicFilterBackend, DynamicSortingFilter
 
+from django.db.models import Q
 
 from base.models import Drone
 from base.api.serializers.drones import DroneSerializer, DroneBatterySerializer
@@ -45,3 +46,19 @@ class DroneViewSet(DynamicModelViewSet):
     def battery(self, request, pk=None):
         drone = self.get_object()
         return Response(DroneBatterySerializer(embed=True, many=False).to_representation(drone))
+
+
+    @extend_schema(methods=['get'], responses={200: DroneSerializer(many=True)},
+                   description="API endpoint allowing to retrieve the available drones for loading.")
+    @action(detail=False, methods=['get'])
+    def available_for_loading(self, request, pk=None):
+        drones = Drone.objects.filter(
+            Q(state='IDLE', battery_capacity__gte=25) |
+            Q(state='LOADING')
+        )
+
+        page = self.paginate_queryset(drones)
+        if page is not None:
+            return self.get_paginated_response(DroneSerializer(embed=True, many=True).to_representation(drones))
+            
+        return Response(DroneSerializer(embed=True, many=True).to_representation(drones))

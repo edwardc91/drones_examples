@@ -79,7 +79,8 @@ class Drone(CommonInfo):
 
     def is_ready_to_flight(self):
         state = self.state
-        return state == 'IDLE' or state == 'LOADING'
+        battery = self.battery_capacity
+        return (state == 'IDLE' and battery >= 25 ) or state == 'LOADING'
 
 
     def get_load(self):
