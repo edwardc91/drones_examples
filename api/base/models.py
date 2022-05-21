@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -83,14 +83,13 @@ class Drone(CommonInfo):
         return (state == 'IDLE' and battery >= 25 ) or state == 'LOADING'
 
 
-    def get_load(self):
+    def get_load_weight(self):
         current_flight = self.flights_rel.filter(was_delivered=False)
         if current_flight.exists():
-            return current_flight[0].loads_rel.aggregate(
+            return current_flight[0].loads_rel.annotate(quantity_x_weight=F('medication_rel__weight') * F('quantity')).aggregate(
                 total_load=Sum(
-                    'medication_rel__weight', 
-                    field="medication_rel__weight*quantity")
-                )['total_load']  
+                    'quantity_x_weight'
+                ))['total_load']  
         else:
             return 0
 

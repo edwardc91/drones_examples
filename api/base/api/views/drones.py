@@ -10,9 +10,12 @@ from dynamic_rest.viewsets import DynamicModelViewSet
 from dynamic_rest.filters import DynamicFilterBackend, DynamicSortingFilter
 
 from django.db.models import Q
+from django.db import transaction
+from django.utils.translation import ugettext_lazy as _
 
-from base.models import Drone
-from base.api.serializers.drones import DroneSerializer, DroneBatterySerializer, DroneLoadSerializer
+from base.models import Drone, Flight, Load, Medication
+from base.api.serializers.drones import DroneSerializer, DroneBatterySerializer, DroneLoadSerializer, DroneAddLoadSerializer, DroneCurrentLoadSerializer
+from base.api.serializers.errors import ErrorSerializer
 
 
 class DroneViewSet(DynamicModelViewSet):
@@ -47,11 +50,89 @@ class DroneViewSet(DynamicModelViewSet):
         drone = self.get_object()
         return Response(DroneBatterySerializer(embed=True, many=True).to_representation(drone))
 
+
+    @extend_schema(methods=['get'], responses={200: DroneCurrentLoadSerializer()},
+                   description="API endpoint allowing to retrieve the current load weight for a drone.")
+    @action(detail=True, methods=['get'])
+    def current_load_weight(self, request, pk=None):
+        drone = self.get_object()
+        return Response(DroneCurrentLoadSerializer({"current_load": drone.get_load_weight()}).data, status=200)
+
+
     @extend_schema(methods=['get'], responses={200: DroneLoadSerializer()},
                    description="API endpoint allowing to retrieve the load for a drone.")
     @action(detail=True, methods=['get'])
     def load(self, request, pk=None):
         drone = self.get_object()
+        flights = drone.flights_rel.filter(was_delivered=False)
+        loads = {}
+        if flights.exists():
+            loads = flights[0].loads_rel
+        return Response(DroneLoadSerializer(embed=True, many=True).to_representation(loads))
+
+    
+    @extend_schema(
+        methods=['patch'], 
+        responses={
+            200: DroneLoadSerializer(),
+            422: ErrorSerializer()
+        },
+        request=DroneAddLoadSerializer(many=False),
+        description="API endpoint allowing to add load to a drone.")
+    @action(detail=True, methods=['patch'])
+    @transaction.atomic
+    def load_addition(self, request, pk=None):
+        drone = self.get_object()
+
+        serializer = DroneAddLoadSerializer(data=request.data, many=False)
+
+        if serializer.is_valid():
+            medication=None
+            load_data = serializer.data
+            try:
+                medication=Medication.objects.get(pk=load_data['medication'])
+            except Medication.DoesNotExist:
+                return Response({'details': _('Medication does not exists on database')}, status=422)
+
+            if drone.state == 'IDLE' and drone.battery_capacity >= 25:
+                drone.state='LOADING'
+                flight = Flight.objects.create(
+                    drone_rel=drone,
+                )
+
+                if drone.weight_limit >= load_data['quantity'] * medication.weight:
+ 
+                    Load.objects.create(
+                        flight_rel=flight,
+                        quantity=load_data['quantity'],
+                        medication_rel=medication
+                    )
+                else:
+                    return Response({'details': _('The load is higher that the current weight capacity of the drone')}, status=422)
+                drone.save()
+            elif drone.state == 'LOADING':
+                if drone.get_load_weight() + load_data['quantity'] * medication.weight <= drone.weight_limit:
+                    flight = Flight.objects.filter(drone_rel__id=drone.id, was_delivered=False)
+                    old_load = flight[0].loads_rel.filter(medication_rel__id=medication.id)
+                    if old_load.exists():
+                        old_load = old_load[0]
+                        old_load.quantity += load_data['quantity']
+                        old_load.save()
+                        flight[0].save()
+                    else:
+                        Load.objects.create(
+                            flight_rel=flight,
+                            quantity=load_data['quantity'],
+                            medication_rel=medication
+                        )
+                    drone.save()
+                else:
+                    return Response({'details': _('The load is higher that the current weight capacity of the drone')}, status=422)
+            else:
+                return Response({'details': _('The drone cannot accept new load')}, status=422)
+        else:
+            return Response({'details': _('Invalid payload')}, status=422)
+
         flights = drone.flights_rel.filter(was_delivered=False)
         loads = {}
         if flights.exists():

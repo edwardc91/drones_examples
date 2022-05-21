@@ -3,6 +3,8 @@ from base.models import Drone, Load
 from dynamic_rest.fields.fields import DynamicRelationField
 from dynamic_rest.serializers import DynamicModelSerializer
 
+from rest_framework import serializers
+
 from base.api.serializers.medications import MedicationSerializer
 
 
@@ -35,3 +37,12 @@ class DroneLoadSerializer(DynamicModelSerializer):
         fields = ('pk', 'medication_rel', 'quantity')
 
     medication_rel = DynamicRelationField(MedicationSerializer)
+
+class DroneCurrentLoadSerializer(serializers.Serializer):
+
+    current_load = serializers.FloatField()
+
+class DroneAddLoadSerializer(serializers.Serializer):
+    quantity = serializers.IntegerField()
+
+    medication = serializers.IntegerField()
