@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-from celery.schedules import crontab
 
 from pathlib import Path
 from datetime import timedelta
@@ -138,7 +137,11 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'TEST_REQUEST_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
 }
 
 SIMPLE_JWT = {
@@ -146,19 +149,9 @@ SIMPLE_JWT = {
 }
 
 # Celery configurations
-
-CELERY_BEAT_SCHEDULE = {
-    "check_drone_battery_task": {
-        "task": "drones.tasks.check_drone_battery_task",
-        "schedule": crontab(minute="*"),
-    },
-}
-
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', "redis://redis:6379")
-CELERY_RESULT_BACKEND = os.getenv(
+CELERY_broker_url = os.getenv('CELERY_BROKER_URL', "redis://redis:6379")
+result_backen = os.getenv(
     'CELERY_RESULT_BACKEND', "redis://redis:6379")
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -208,3 +201,36 @@ MEDIA_URL = "/media/"
 ADMINS = [
     ('admin', 'admin@gmail.com'),
 ]
+
+# logging configuration
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#         'file': {
+#             'level': 'INFO',
+#             'class': 'logging.FileHandler',
+#             'filename': '/var/log/tasks.log',
+#         },
+#     },
+#     'root': {
+#         'handlers': ['console'],
+#         'level': 'DEBUG',
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+#             'propagate': False,
+#         },
+#         'celery': {
+#             'handlers': ['file', 'console'],
+#             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+#             'propagate': False,
+#         },
+#     },
+# }

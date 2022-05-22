@@ -13,11 +13,12 @@ services:
       - -c
       - |
         yes 'yes' | python manage.py collectstatic 
-        python manage.py loaddata drones medications loads
         python manage.py makemigrations
         python manage.py migrate --noinput
-        python manage.py inituser   
-        uwsgi --ini /project/uwsgi.ini
+        python manage.py loaddata drones medications loads
+        python manage.py inituser
+        /bin/sh -c "while sleep 1000; do :; done"
+      #  uwsgi --ini /project/uwsgi.ini
       # /bin/sh -c "while sleep 1000; do :; done"
     volumes:
       - ./api:/project
@@ -39,10 +40,11 @@ services:
       args:
         - http_proxy=${HTTP_PROXY}
         - https_proxy=${HTTPS_PROXY}
-    command: celery -A drones worker -l info
+    command: celery -A drones worker -l info -f /var/log/celery.logs
     volumes:
       - ./api:/project
       - api-media:/api_media
+      - celery-log:/var/log/
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
     env_file:
@@ -98,4 +100,6 @@ volumes:
     name: ${PROJECT_NAME}_api_media
   db-data:
     name: ${PROJECT_NAME}_db_data
+  celery-log:
+    name: ${PROJECT_NAME}_celery_log
 
