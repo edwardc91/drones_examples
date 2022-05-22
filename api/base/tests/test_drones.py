@@ -172,6 +172,17 @@ class DroneViewSetTests(APITestCase):
         logger.debug('Testing status code response: %s, code: %d'%(response.json(), response.status_code))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        url_load_weight = self.base_url + '/drones/{}/current_load_weight/'.format(drone.id)
+
+        logger.debug('Sending TEST data to url: %s, data: %s'%(url, data))
+        response = self.client.get(url_load_weight, format='json')
+
+        json = response.json()
+
+        logger.debug('Testing status code response: %s, code: %d'%(json, response.status_code))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json["current_load"], 20)
+
         data = {
             'quantity' : 2,
             'medication' : medication.id,
@@ -182,5 +193,14 @@ class DroneViewSetTests(APITestCase):
    
         logger.debug('Testing status code response: %s, code: %d'%(response.json(), response.status_code))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        logger.debug('Sending TEST data to url: %s, data: %s'%(url, data))
+        response = self.client.get(url_load_weight, format='json')
+
+        json = response.json()
+
+        logger.debug('Testing status code response: %s, code: %d'%(json, response.status_code))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json["current_load"], 40)
 
 
