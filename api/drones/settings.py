@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+from celery.schedules import crontab
 
 from pathlib import Path
 from datetime import timedelta
@@ -145,6 +146,14 @@ SIMPLE_JWT = {
 }
 
 # Celery configurations
+
+CELERY_BEAT_SCHEDULE = {
+    "check_drone_battery_task": {
+        "task": "drones.tasks.check_drone_battery_task",
+        "schedule": crontab(minute="*"),
+    },
+}
+
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', "redis://redis:6379")
 CELERY_RESULT_BACKEND = os.getenv(
     'CELERY_RESULT_BACKEND', "redis://redis:6379")
