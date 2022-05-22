@@ -82,6 +82,13 @@ class DroneViewSet(DynamicModelViewSet):
     @action(detail=True, methods=['patch'])
     @transaction.atomic
     def load_addition(self, request, pk=None):
+        """
+        Adds load to a drone.
+        # This endpoint allows add new load to a drone available
+        * If the drone is on IDLE state a new Flight is created with the load in the payload
+        * If the drone is on LOADING state and do not exists a load for the medication in the payload a new load is created, if exists the load quanity is updated with the current quanty plus the quantity on the payload
+        """
+
         drone = self.get_object()
 
         serializer = DroneAddLoadSerializer(data=request.data, many=False)
@@ -126,6 +133,9 @@ class DroneViewSet(DynamicModelViewSet):
                             medication_rel=medication
                         )
                     drone.save()
+                    if drone.get_load_weight() == drone.weight_limit:
+                        drone.state = 'LOADED'
+                        drone.save()
                 else:
                     return Response({'details': _('The load is higher that the current weight capacity of the drone')}, status=422)
             else:
