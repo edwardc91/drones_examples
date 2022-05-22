@@ -254,3 +254,33 @@ class Load(CommonInfo):
 
     def __str__(self) -> str:
         return "{}-{}".format(self.flight_rel, self.medication_rel)
+
+
+class DroneStatusLog(CommonInfo):
+    """
+    Historic status of the drones
+    """
+
+    drone_rel = models.ForeignKey(
+        Drone,
+        related_name='status_log_rel',
+        on_delete=models.CASCADE,
+        null=False,
+        verbose_name=_('Drone')
+    )
+
+    current_battery = models.FloatField(
+        verbose_name=_('Current battery'),
+        null=True
+    )
+
+    def drone_name(self):
+        return self.drone_rel.serial_number
+
+    drone_name.short_description = _('Drone serial number')
+    
+    def __str__(self) -> str:
+        return "{} {}".format(self.drone_rel.serial_number, self.created)
+
+    class Meta:
+        verbose_name = _("Drone's status log")

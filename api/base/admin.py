@@ -14,3 +14,10 @@ class DroneAdmin(admin.ModelAdmin):
     list_display = ('name', 'code', 'weight',)
     search_fields = ['name', 'code',]
 
+
+@admin.register(models.DroneStatusLog)
+class DroneAdmin(admin.ModelAdmin):
+    list_display = ('drone_name', 'current_battery', 'created',)
+    search_fields = ['drone_name',]
+    date_hierarchy = 'created'
+

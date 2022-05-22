@@ -1,7 +1,7 @@
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
-from base.models import Drone
+from base.models import Drone, DroneStatusLog
 
 logger = get_task_logger(__name__)
 
@@ -13,3 +13,8 @@ def check_drone_battery_task():
             logger.info(message)
         else:
             logger.warning(message)
+
+        DroneStatusLog.objects.create(
+            drone_rel=drone,
+            current_battery=drone.battery_capacity
+        )
