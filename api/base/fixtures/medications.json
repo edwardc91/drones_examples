@@ -1,0 +1,35 @@
+[
+    {
+      "model": "base.medication",
+      "pk": 1,
+      "fields": {
+        "created": "2022-05-22 12:00:00",
+        "updated": "2022-05-22 12:00:00",
+        "weight": 10,
+        "code": "5678-LLL-656",
+        "name": "Medication #1"
+      }
+    },
+    {
+        "model": "base.medication",
+        "pk": 2,
+        "fields": {
+          "created": "2022-05-22 12:00:00",
+          "updated": "2022-05-22 12:00:00",
+          "weight": 5,
+          "code": "3333-LBU-567",
+          "name": "Medication #2"
+        }
+    },
+    {
+        "model": "base.medication",
+        "pk": 3,
+        "fields": {
+          "created": "2022-05-22 12:00:00",
+          "updated": "2022-05-22 12:00:00",
+          "weight": 20,
+          "code": "1346-AAE-100",
+          "name": "Medication #3"
+        }
+    }
+]

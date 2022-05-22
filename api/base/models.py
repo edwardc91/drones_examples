@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Sum, F
 from django.utils.translation import ugettext_lazy as _
+from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator
 
 
 class CommonInfo(models.Model):
@@ -58,14 +59,34 @@ class Drone(CommonInfo):
         blank=False,
         null=False,
         verbose_name=_('Weight limit'),
-        default=500
+        default=500,
+        validators=[
+            MaxValueValidator(
+                limit_value=500,
+                message=_('Weight limit cannot be greater than 500.'),
+            ),
+            MinValueValidator(
+                limit_value=1,
+                message=_('Weight limit cannot be less than 1.'),
+            )
+        ]
     )
 
     battery_capacity = models.FloatField(
         blank=False,
         null=False,
         verbose_name=_('Weight limit'),
-        default=100
+        default=100,
+        validators=[
+            MaxValueValidator(
+                limit_value=100,
+                message=_('Battery capacity cannot be greater than 100.'),
+            ),
+            MinValueValidator(
+                limit_value=0,
+                message=_('Battery capacity cannot be less than 0.'),
+            )
+        ]
     )
 
     state = models.CharField(
@@ -80,7 +101,7 @@ class Drone(CommonInfo):
     def is_ready_to_flight(self):
         state = self.state
         battery = self.battery_capacity
-        return (state == 'IDLE' and battery >= 25 ) or state == 'LOADING'
+        return (state == 'IDLE' and battery >= 25 ) or state == 'LOADING' or state == 'LOADED'
 
 
     def get_load_weight(self):
@@ -159,7 +180,17 @@ class Medication(CommonInfo):
         blank=False,
         null=False,
         verbose_name=_('Weight'),
-        default=1
+        default=1,
+        validators=[
+            MaxValueValidator(
+                limit_value=500,
+                message=_('Weight cannot be greater than 500.'),
+            ),
+            MinValueValidator(
+                limit_value=1,
+                message=_('Weight cannot be less than 1.'),
+            )
+        ]
     )
 
     code = models.CharField(
@@ -167,7 +198,13 @@ class Medication(CommonInfo):
         blank=False,
         null=False,
         verbose_name=_('Code'),
-        unique=True
+        unique=True,
+        validators=[
+            RegexValidator(
+                regex='^([A-Z0-9]|-|_)+$',
+                message=_('Invalid medication code.'),
+            ),
+        ],
     )
 
     image = models.ImageField(

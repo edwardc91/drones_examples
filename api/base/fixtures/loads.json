@@ -1,0 +1,22 @@
+[
+    {
+      "model": "base.flight",
+      "pk": 1,
+      "fields": {
+        "created": "2022-05-22 12:00:00",
+        "updated": "2022-05-22 12:00:00",
+        "drone_rel": 3
+      }
+    },
+    {
+        "model": "base.load",
+        "pk": 1,
+        "fields": {
+          "created": "2022-05-22 12:00:00",
+          "updated": "2022-05-22 12:00:00",
+          "flight_rel": 1,
+          "medication_rel": 1,
+          "quantity": 10
+        }
+    }
+]

@@ -6,7 +6,52 @@
         "created": "2022-05-22 12:00:00",
         "updated": "2022-05-22 12:00:00",
         "serial_number": "XXYY234YYYLLKKK1234",
-        "model": "Cruiserweight"
+        "model": "Heavyweight"
+      }
+    },
+    {
+      "model": "base.drone",
+      "pk": 2,
+      "fields": {
+        "created": "2022-05-22 12:00:00",
+        "updated": "2022-05-22 12:00:00",
+        "serial_number": "XXYYLLL89KKK1234",
+        "model": "Cruiserweight",
+        "weight_limit": 400
+      }
+    },
+    {
+      "model": "base.drone",
+      "pk": 3,
+      "fields": {
+        "state": "LOADED",
+        "created": "2022-05-22 12:00:00",
+        "updated": "2022-05-22 12:00:00",
+        "serial_number": "8578YYYLLKKK1234",
+        "model": "Heavyweight"
+      }
+    },
+    {
+      "model": "base.drone",
+      "pk": 4,
+      "fields": {
+        "created": "2022-05-22 12:00:00",
+        "updated": "2022-05-22 12:00:00",
+        "serial_number": "34567hgfbJKK",
+        "model": "Middleweight",
+        "weight_limit": 300,
+        "battery_capacity": 20
+      }
+    },
+    {
+      "model": "base.drone",
+      "pk": 5,
+      "fields": {
+        "created": "2022-05-22 12:00:00",
+        "updated": "2022-05-22 12:00:00",
+        "serial_number": "34TTThjbFD78gfbJKK",
+        "model": "Lightweight",
+        "weight_limit": 200
       }
     }
 ]

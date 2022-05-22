@@ -13,7 +13,7 @@ services:
       - -c
       - |
         yes 'yes' | python manage.py collectstatic 
-        python manage.py loaddata drones
+        python manage.py loaddata drones medications loads
         python manage.py makemigrations
         python manage.py migrate --noinput
         python manage.py inituser
