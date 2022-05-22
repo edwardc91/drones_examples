@@ -99,7 +99,7 @@ class DroneViewSet(DynamicModelViewSet):
             try:
                 medication=Medication.objects.get(pk=load_data['medication'])
             except Medication.DoesNotExist:
-                return Response({'details': _('Medication does not exists on database')}, status=422)
+                return Response({'details': _('Medication does not exists on database')}, status=400)
 
             if drone.state == 'IDLE' and drone.battery_capacity >= 25:
                 drone.state='LOADING'
@@ -115,7 +115,7 @@ class DroneViewSet(DynamicModelViewSet):
                         medication_rel=medication
                     )
                 else:
-                    return Response({'details': _('The load is higher that the current weight capacity of the drone')}, status=422)
+                    return Response({'details': _('The load is higher that the current weight capacity of the drone')}, status=400)
                 drone.save()
             elif drone.state == 'LOADING':
                 if drone.get_load_weight() + load_data['quantity'] * medication.weight <= drone.weight_limit:
@@ -137,11 +137,11 @@ class DroneViewSet(DynamicModelViewSet):
                         drone.state = 'LOADED'
                         drone.save()
                 else:
-                    return Response({'details': _('The load is higher that the current weight capacity of the drone')}, status=422)
+                    return Response({'details': _('The load is higher that the current weight capacity of the drone')}, status=400)
             else:
-                return Response({'details': _('The drone cannot accept new load')}, status=422)
+                return Response({'details': _('The drone cannot accept new load')}, status=400)
         else:
-            return Response({'details': _('Invalid payload')}, status=422)
+            return Response({'details': _('Invalid payload')}, status=400)
 
         flights = drone.flights_rel.filter(was_delivered=False)
         loads = {}
