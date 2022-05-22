@@ -17,7 +17,7 @@ services:
         python manage.py migrate --noinput
         python manage.py loaddata drones medications loads
         python manage.py inituser
-        /bin/sh -c "while sleep 1000; do :; done"
+        uwsgi --ini /project/uwsgi.ini
       #  uwsgi --ini /project/uwsgi.ini
       # /bin/sh -c "while sleep 1000; do :; done"
     volumes:

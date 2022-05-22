@@ -14,6 +14,10 @@ You can also access to a basic admin application of Django on [http://localhost:
 
 **Important!!!** The endpoint for drones, medications and loads managments require a authenticated user, you can use the endpoint [http://localhost:8005/api/token/](http://localhost:8005/api/token/) to get a valid JWT token
 
+## Drone's battery history log
+***
+A history log of the drone's batteries is save on the database and in a log file you can the database log on django admin in [localhost:8005/admin/base/dronestatuslog](localhost:8005/admin/base/dronestatuslog). Log is updated each minute for all the drones.
+
 ## Testing
 ***
 Unit tests were added to test the API's endpoints, you can run the tests with command: 
