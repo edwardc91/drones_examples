@@ -28,7 +28,8 @@ RUN pip install -r requirements.txt && pip install uwsgi
 COPY ./docker/wait-for /usr/bin/
 RUN chmod +x /usr/bin/wait-for
 
-RUN apt-get -q update && apt-get -qy install netcat
+RUN apt-get -o Acquire::http::proxy=$HTTP_PROXY -q update && \
+    apt-get -o Acquire::http::proxy=$HTTP_PROXY -qy install netcat
 
 WORKDIR /project
     
