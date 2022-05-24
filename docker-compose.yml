@@ -1,6 +1,18 @@
 version: '3.4'
 
 services:
+  db:
+    container_name: ${PROJECT_NAME}_db
+    build:
+      context: . 
+      dockerfile: docker/database/Dockerfile
+    ports:
+      - 5435:${POSTGRES_PORT}
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
   api:
     container_name: ${PROJECT_NAME}_api
     build:
@@ -84,18 +96,6 @@ services:
       - api
       - redis
       - celery
-  db:
-    container_name: ${PROJECT_NAME}_db
-    build:
-      context: . 
-      dockerfile: docker/database/Dockerfile
-    ports:
-      - 5435:${POSTGRES_PORT}
-    env_file:
-      - .env
-    restart: always
-    volumes:
-      - db-data:/var/lib/postgresql/data
 volumes:
   api-media:
     name: ${PROJECT_NAME}_api_media
