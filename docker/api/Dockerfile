@@ -25,5 +25,8 @@ COPY ./api/requirements.txt /project/
 # Install the requirements.
 RUN pip install -r requirements.txt && pip install uwsgi
 
+COPY ./docker/wait-for /usr/bin/
+RUN chmod +x /usr/bin/wait-for
+
 WORKDIR /project
     

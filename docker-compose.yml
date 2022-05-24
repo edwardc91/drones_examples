@@ -13,6 +13,7 @@ services:
       - -c
       - |
         yes 'yes' | python manage.py collectstatic 
+        wait-for db:5432
         python manage.py makemigrations
         python manage.py migrate --noinput
         python manage.py loaddata drones medications loads
