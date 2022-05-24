@@ -26,4 +26,6 @@ COPY ./api/requirements.txt /project/
 RUN pip install -r requirements.txt && pip install uwsgi
 
 WORKDIR /project
+
+RUN python manage.py migrate --noinput
     
